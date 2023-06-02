@@ -39,16 +39,16 @@ func NewLimiterStore(cleanupInterval, updateInterval time.Duration) *LimiterStor
 }
 
 func (s *LimiterStore) LoadAndUpdate(key string, rateLimit rate.Limit, burst int) *rate.Limiter {
-	limiter, _ := s.limiterMap.LoadOrStore(key, &rateLimiter{
+	value, loaded := s.limiterMap.LoadOrStore(key, &rateLimiter{
 		limiter:   rate.NewLimiter(rateLimit, burst),
 		lastSeen:  time.Now(),
 		threshold: s.cleanupInterval,
 	})
 
-	lim := limiter.(*rateLimiter)
+	lim := value.(*rateLimiter)
 
 	// 检查最后一次更新时间是否超过指定的时间间隔，如果超过则执行更新操作
-	if time.Since(lim.lastSeen) > s.updateInterval {
+	if loaded && time.Since(lim.lastSeen) > s.updateInterval {
 		lim.update(rateLimit, burst)
 	}
 
