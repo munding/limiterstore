@@ -1,6 +1,6 @@
 # LimiterStore
 
-LimiterStore is a rate limiting library for Golang that provides a simple, thread-safe way to implement rate limiters in your applications.
+LimiterStore is a storage for the `rate.Limiter` structs from the "golang.org/x/time/rate" package. It allows you to store and retrieve previously created `rate.Limiter` using string keys, such as IP addresses.
 
 ## Features
 
