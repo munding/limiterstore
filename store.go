@@ -26,7 +26,6 @@ func (l *rateLimiter) update(newLimit rate.Limit, newBurst int) {
 	if l.limiter.Burst() != newBurst {
 		l.limiter.SetBurst(newBurst)
 	}
-	l.lastSeen = time.Now()
 }
 
 func NewLimiterStore(cleanupInterval, updateInterval time.Duration) *LimiterStore {
@@ -50,6 +49,7 @@ func (s *LimiterStore) LoadAndUpdate(key string, rateLimit rate.Limit, burst int
 	// 检查最后一次更新时间是否超过指定的时间间隔，如果超过则执行更新操作
 	if loaded && time.Since(lim.lastSeen) > s.updateInterval {
 		lim.update(rateLimit, burst)
+		lim.lastSeen = time.Now()
 	}
 
 	return lim.limiter
